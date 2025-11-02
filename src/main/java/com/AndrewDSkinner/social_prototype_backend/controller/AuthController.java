@@ -4,6 +4,7 @@ import com.AndrewDSkinner.social_prototype_backend.config.JwtUtil;
 import com.AndrewDSkinner.social_prototype_backend.dto.JwtResponse;
 import com.AndrewDSkinner.social_prototype_backend.dto.UserDTORequest;
 import com.AndrewDSkinner.social_prototype_backend.dto.UserDTOResponse;
+import com.AndrewDSkinner.social_prototype_backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
     private final JwtUtil jwtUtil;
+    private final UserService userService;
 
-    public AuthController(JwtUtil jwtUtil) {
+    public AuthController(JwtUtil jwtUtil, UserService userService) {
         this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -34,6 +37,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<JwtResponse> register(@RequestBody UserDTORequest userDTORequest) {
+        userService.registerUser(userDTORequest);
         String token = jwtUtil.generateToken(userDTORequest);
         JwtResponse response = new JwtResponse(token);
 
