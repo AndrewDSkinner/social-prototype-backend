@@ -27,7 +27,6 @@ public class BasicUserService implements UserService {
 
         Optional<User> result = userRepo.saveUser(user);
 
-        // If result isn't null, return the user
         if (result.isPresent()) {
             return result.get();
         } else {
