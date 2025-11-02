@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcUserRepo implements UserRepo {
-    private  final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public JdbcUserRepo(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
