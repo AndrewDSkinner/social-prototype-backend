@@ -1,7 +1,7 @@
 package com.AndrewDSkinner.social_prototype_backend.config;
 
 
-import com.AndrewDSkinner.social_prototype_backend.dto.UserDTORequest;
+import com.AndrewDSkinner.social_prototype_backend.dto.UserDTOResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -14,13 +14,13 @@ import java.util.Date;
 public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(UserDTORequest userDTORequest) {
+    public String generateToken(UserDTOResponse userDTOResponse) {
         // 30 minutes
         long expiration = 1000 * 60 * 30;
         return Jwts.builder()
-                .setSubject(userDTORequest.getEmail())
-                .claim("firstName", userDTORequest.getFirstName())
-                .claim("lastName", userDTORequest.getLastName())
+                .setSubject(userDTOResponse.getEmail())
+                .claim("firstName", userDTOResponse.getFirstName())
+                .claim("lastName", userDTOResponse.getLastName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)

@@ -2,7 +2,10 @@ package com.AndrewDSkinner.social_prototype_backend.service;
 
 import com.AndrewDSkinner.social_prototype_backend.User;
 import com.AndrewDSkinner.social_prototype_backend.dto.UserDTORequest;
+import com.AndrewDSkinner.social_prototype_backend.dto.UserDTOResponse;
+import com.AndrewDSkinner.social_prototype_backend.exceptions.UserRegistrationException;
 import com.AndrewDSkinner.social_prototype_backend.repo.UserRepo;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,20 +20,22 @@ public class BasicUserService implements UserService {
     }
 
     @Override
-    public User registerUser(UserDTORequest userDto) {
+    public UserDTOResponse registerUser(UserDTORequest userDto) throws UserRegistrationException {
         User user = new User(
-            userDto.getFirstName(),
-            userDto.getLastName(),
-            userDto.getEmail(),
-            userDto.getPassword()
+                null,
+                userDto.getFirstName(),
+                userDto.getLastName(),
+                userDto.getEmail(),
+                BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt())
         );
 
-        Optional<User> result = userRepo.saveUser(user);
+        Optional<User> savedUser = Optional.ofNullable(userRepo.saveUser(user).orElseThrow(() -> new UserRegistrationException("User registration failed")));
 
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new RuntimeException("User registration failed");
-        }
+        return new UserDTOResponse(
+                savedUser.get().getId(),
+                savedUser.get().getFirstName(),
+                savedUser.get().getLastName(),
+                savedUser.get().getEmail()
+        );
     }
 }
