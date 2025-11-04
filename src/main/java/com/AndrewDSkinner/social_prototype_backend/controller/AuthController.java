@@ -51,11 +51,11 @@ public class AuthController {
         } catch (UserRegistrationException e) {
             logger.error("User registration failed: {}", e.getMessage());
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.CONFLICT.value());
-            return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
         } catch (Exception e) {
             logger.error("Unexpected error during registration", e);
             ErrorResponse errorResponse = new ErrorResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 }
