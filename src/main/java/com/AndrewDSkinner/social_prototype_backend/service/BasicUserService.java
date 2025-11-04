@@ -5,7 +5,7 @@ import com.AndrewDSkinner.social_prototype_backend.dto.UserDTORequest;
 import com.AndrewDSkinner.social_prototype_backend.dto.UserDTOResponse;
 import com.AndrewDSkinner.social_prototype_backend.exceptions.UserRegistrationException;
 import com.AndrewDSkinner.social_prototype_backend.repo.UserRepo;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 public class BasicUserService implements UserService {
 
     private final UserRepo userRepo;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public BasicUserService(UserRepo userRepo) {
+    public BasicUserService(UserRepo userRepo, BCryptPasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class BasicUserService implements UserService {
                 userDto.getLastName(),
                 userDto.getEmail(),
                 userDto.getPassword() != null && !userDto.getPassword().isEmpty() ?
-                        BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt()) : null
+                        passwordEncoder.encode(userDto.getPassword()) : null
         );
 
         User savedUser = userRepo.saveUser(user).orElseThrow(() -> new UserRegistrationException("User registration failed"));
