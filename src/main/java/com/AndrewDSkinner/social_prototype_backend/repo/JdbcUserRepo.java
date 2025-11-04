@@ -34,17 +34,13 @@ public class JdbcUserRepo implements UserRepo {
                 return Optional.empty();
             }
             Long id = key.longValue();
-            String selectSql = "SELECT id, first_name, last_name, email FROM users WHERE id = ?";
-            try {
-                  User saved = jdbcTemplate.queryForObject(selectSql, (rs, rowNum) -> new User(
-                      rs.getLong("id"),
-                      rs.getString("first_name"),
-                      rs.getString("last_name"),
-                      rs.getString("email"),
-                      null), id);
-                  return Optional.ofNullable(saved);
-              } catch (org.springframework.dao.EmptyResultDataAccessException e) {
-                  return Optional.empty();
-                  }
+            User saved = new User(
+                id,
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                null
+            );
+            return Optional.of(saved);
         }
 }
