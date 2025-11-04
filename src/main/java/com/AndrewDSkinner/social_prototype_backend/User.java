@@ -4,7 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(name = "users", uniqueConstraints = {
     @UniqueConstraint(columnNames = "email")
@@ -12,11 +14,11 @@ import jakarta.persistence.UniqueConstraint;
 public class User {
 
     @Id
-    Long id;
-    String firstName;
-    String lastName;
-    String email;
-    String password;
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
 
     public User(Long id, String firstName, String lastName, String email, String password) {
         this.id = id;
@@ -35,23 +37,4 @@ public class User {
 
     public User() {}
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 }
