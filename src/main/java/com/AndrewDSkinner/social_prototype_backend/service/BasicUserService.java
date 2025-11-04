@@ -29,13 +29,13 @@ public class BasicUserService implements UserService {
                 BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt())
         );
 
-        Optional<User> savedUser = Optional.ofNullable(userRepo.saveUser(user).orElseThrow(() -> new UserRegistrationException("User registration failed")));
+        User savedUser = userRepo.saveUser(user).orElseThrow(() -> new UserRegistrationException("User registration failed"));
 
         return new UserDTOResponse(
-                savedUser.get().getId(),
-                savedUser.get().getFirstName(),
-                savedUser.get().getLastName(),
-                savedUser.get().getEmail()
+                savedUser.getId(),
+                savedUser.getFirstName(),
+                savedUser.getLastName(),
+                savedUser.getEmail()
         );
     }
 }

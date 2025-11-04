@@ -8,6 +8,7 @@ import com.AndrewDSkinner.social_prototype_backend.exceptions.ErrorResponse;
 import com.AndrewDSkinner.social_prototype_backend.exceptions.UserRegistrationException;
 import com.AndrewDSkinner.social_prototype_backend.service.UserService;
 import org.slf4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,25 +45,17 @@ public class AuthController {
         try {
             UserDTOResponse userDTOResponse = userService.registerUser(userDTORequest);
 
-            String token;
-            JwtResponse response = null;
-            if (userDTOResponse != null) {
-                token = jwtUtil.generateToken(userDTOResponse);
-                response = new JwtResponse(token, userDTOResponse);
-                return ResponseEntity.ok(response);
-            } else {
-                logger.error("User registration failed - service returned null response.");
-                ErrorResponse errorResponse = new ErrorResponse("User registration failed.", 400);
-                return ResponseEntity.badRequest().body(errorResponse);
-            }
+            String token = jwtUtil.generateToken(userDTOResponse);
+            JwtResponse response = new JwtResponse(token, userDTOResponse);
+            return ResponseEntity.ok(response);
         } catch (UserRegistrationException e) {
             logger.error("User registration failed: {}", e.getMessage());
-            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 409);
-            return ResponseEntity.status(409).body(errorResponse);
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.CONFLICT.value());
+            return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(errorResponse);
         } catch (Exception e) {
             logger.error("Unexpected error during registration", e);
-            ErrorResponse errorResponse = new ErrorResponse("An unexpected error occurred", 500);
-            return ResponseEntity.status(500).body(errorResponse);
+            ErrorResponse errorResponse = new ErrorResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
         }
     }
 }
