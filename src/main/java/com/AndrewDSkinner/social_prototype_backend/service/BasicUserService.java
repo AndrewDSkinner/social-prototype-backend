@@ -8,7 +8,6 @@ import com.AndrewDSkinner.social_prototype_backend.repo.UserRepo;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class BasicUserService implements UserService {
@@ -22,7 +21,6 @@ public class BasicUserService implements UserService {
     @Override
     public UserDTOResponse registerUser(UserDTORequest userDto) throws UserRegistrationException {
         User user = new User(
-                null,
                 userDto.getFirstName(),
                 userDto.getLastName(),
                 userDto.getEmail(),
