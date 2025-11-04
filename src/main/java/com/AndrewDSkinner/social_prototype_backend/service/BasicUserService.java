@@ -2,35 +2,41 @@ package com.AndrewDSkinner.social_prototype_backend.service;
 
 import com.AndrewDSkinner.social_prototype_backend.User;
 import com.AndrewDSkinner.social_prototype_backend.dto.UserDTORequest;
+import com.AndrewDSkinner.social_prototype_backend.dto.UserDTOResponse;
+import com.AndrewDSkinner.social_prototype_backend.exceptions.UserRegistrationException;
 import com.AndrewDSkinner.social_prototype_backend.repo.UserRepo;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class BasicUserService implements UserService {
 
     private final UserRepo userRepo;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public BasicUserService(UserRepo userRepo) {
+    public BasicUserService(UserRepo userRepo, BCryptPasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public User registerUser(UserDTORequest userDto) {
+    public UserDTOResponse registerUser(UserDTORequest userDto) throws UserRegistrationException {
         User user = new User(
-            userDto.getFirstName(),
-            userDto.getLastName(),
-            userDto.getEmail(),
-            userDto.getPassword()
+                userDto.getFirstName(),
+                userDto.getLastName(),
+                userDto.getEmail(),
+                userDto.getPassword() != null && !userDto.getPassword().isEmpty() ?
+                        passwordEncoder.encode(userDto.getPassword()) : null
         );
 
-        Optional<User> result = userRepo.saveUser(user);
+        User savedUser = userRepo.saveUser(user).orElseThrow(() -> new UserRegistrationException("User registration failed"));
 
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new RuntimeException("User registration failed");
-        }
+        return new UserDTOResponse(
+                savedUser.getId(),
+                savedUser.getFirstName(),
+                savedUser.getLastName(),
+                savedUser.getEmail()
+        );
     }
 }
