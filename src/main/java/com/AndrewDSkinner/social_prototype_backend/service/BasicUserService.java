@@ -24,7 +24,8 @@ public class BasicUserService implements UserService {
                 userDto.getFirstName(),
                 userDto.getLastName(),
                 userDto.getEmail(),
-                BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt())
+                userDto.getPassword() != null && !userDto.getPassword().isEmpty() ?
+                        BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt()) : null
         );
 
         User savedUser = userRepo.saveUser(user).orElseThrow(() -> new UserRegistrationException("User registration failed"));
