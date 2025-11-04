@@ -41,7 +41,7 @@ public class AuthController {
 //    }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDTORequest userDTORequest) throws UserRegistrationException {
+    public ResponseEntity<?> register(@RequestBody UserDTORequest userDTORequest) {
         try {
             UserDTOResponse userDTOResponse = userService.registerUser(userDTORequest);
 
